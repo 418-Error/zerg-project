@@ -11,8 +11,9 @@ fi
 # install windows
 
 qemu-system-i386 \
+  --enable-kvm \
   -hda /storage/disk.img \
-  -cdrom /storage/windows.iso \
+  -cdrom $WIN_ISO \
   -display vnc=:0,websocket=5700 \
   -boot d \
   -cpu pentium3 \

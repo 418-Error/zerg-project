@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+echo "Launching Windows with starcraft..."
 # verify that windows has been installed
 if [ ! -f /storage/windows ]; then
     echo "Windows has not been installed..."
@@ -10,8 +11,9 @@ fi
 # launch windows + starcraft...
 
 qemu-system-i386 \
+  --enable-kvm \
   -hda /storage/disk.img \
-  -cdrom /storage/starcraft.iso \
+  -cdrom $STARCRAFT_ISO \
   -cpu pentium3 \
   -m 512 \
   -display vnc=:0,websocket=5700 \
