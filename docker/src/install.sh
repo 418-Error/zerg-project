@@ -11,6 +11,7 @@ fi
 # install windows
 
 qemu-system-i386 \
+  --enable-kvm \
   -hda /storage/disk.img \
   -cdrom $WIN_ISO \
   -display vnc=:0,websocket=5700 \

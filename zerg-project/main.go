@@ -55,6 +55,8 @@ func (s *ZergProject) Play(ctx context.Context, starcraftIso *dagger.File, windo
 		WithEnvVariable("STARCRAFT_ISO", "/images/starcraft.iso").
 		WithEnvVariable("WIN_ISO", "/images/windows.iso").
 		WithExposedPort(5900).
+		WithExposedPort(5700).
+		WithExposedPort(8006).
 		AsService(dagger.ContainerAsServiceOpts{
 			Args: []string{"/run/entry.sh"},
 			InsecureRootCapabilities: true,
