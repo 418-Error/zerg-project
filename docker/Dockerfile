@@ -1,7 +1,10 @@
 FROM debian:bookworm
 
-ARG VERSION_VNC="1.6.0"
 ENV TINI_VERSION="v0.19.0"
+
+ENV NOVNC_TAG="v1.5.0"
+
+ENV WEBSOCKIFY_TAG="v0.13.0"
 
 RUN apt-get update && apt-get install -y \
     qemu-utils \
@@ -11,24 +14,27 @@ RUN apt-get update && apt-get install -y \
 
 RUN apt-get install -y wget \
     ca-certificates \
-    curl
+    curl \
+    git
 
 # Add Tini
 ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
 RUN chmod +x /tini
 
 # Install noVNC
-RUN mkdir -p /usr/share/novnc && \
-    wget "https://github.com/novnc/noVNC/archive/refs/tags/v${VERSION_VNC}.tar.gz" -O /tmp/novnc.tar.gz -q --timeout=10 && \
-    tar -xf /tmp/novnc.tar.gz -C /tmp/ && \
-    cd "/tmp/noVNC-${VERSION_VNC}" && \
-    mv app core vendor package.json *.html /usr/share/novnc
+RUN git config --global advice.detachedHead false && \
+    git clone https://github.com/novnc/noVNC --branch ${NOVNC_TAG} /root/noVNC && \
+    git clone https://github.com/novnc/websockify --branch ${WEBSOCKIFY_TAG} /root/noVNC/utils/websockify
+
+RUN cp /root/noVNC/vnc.html /root/noVNC/index.html
+
+RUN sed -i "/wait ${proxy_pid}/i if [ -n \"\$AUTOCONNECT\" ]; then sed -i \"s/'autoconnect', false/'autoconnect', '\$AUTOCONNECT'/\" /root/noVNC/app/ui.js; fi" /root/noVNC/utils/novnc_proxy
+
+RUN sed -i "/wait ${proxy_pid}/i if [ -n \"\$VNC_PASSWORD\" ]; then sed -i \"s/WebUtil.getConfigVar('password')/'\$VNC_PASSWORD'/\" /root/noVNC/app/ui.js; fi" /root/noVNC/utils/novnc_proxy
+
+RUN sed -i "/wait ${proxy_pid}/i if [ -n \"\$VIEW_ONLY\" ]; then sed -i \"s/UI.rfb.viewOnly = UI.getSetting('view_only');/UI.rfb.viewOnly = \$VIEW_ONLY;/\" /root/noVNC/app/ui.js; fi" /root/noVNC/utils/novnc_proxy
 
 COPY --chmod=755 ./src /run/
-COPY --chmod=755 ./web /var/www/
-COPY --chmod=664 ./web/conf/defaults.json /usr/share/novnc
-COPY --chmod=664 ./web/conf/mandatory.json /usr/share/novnc
-COPY --chmod=744 ./web/conf/nginx.conf /etc/nginx/sites-enabled/web.conf
 
 VOLUME /storage
 EXPOSE 5900 8006 5700
