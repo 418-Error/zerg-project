@@ -39,4 +39,4 @@ COPY --chmod=755 ./src /run/
 VOLUME /storage
 EXPOSE 5900 8006 5700
 
-ENTRYPOINT ["/tini", "--", "/run/entry.sh"]
+ENTRYPOINT ["/run/entry.sh"]
