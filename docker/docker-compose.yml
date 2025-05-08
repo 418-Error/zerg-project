@@ -5,6 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+    environment:
+      - WIN_ISO=/storage/windows.iso
+      - STARCRAFT_ISO=/storage/starcraft.iso
     devices:
       - /dev/kvm
       - /dev/net/tun

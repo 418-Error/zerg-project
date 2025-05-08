@@ -11,7 +11,7 @@ fi
 
 qemu-system-i386 \
   -hda /storage/disk.img \
-  -cdrom /storage/starcraft.iso \
+  -cdrom $STARCRAFT_ISO \
   -cpu pentium3 \
   -m 512 \
   -display vnc=:0,websocket=5700 \
