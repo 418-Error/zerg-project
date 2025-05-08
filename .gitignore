@@ -1,5 +1,5 @@
-*/**.iso
-*/**.img
-*/**.img.gz
-*/**.qcow2
-*/storage
+*.iso
+*.img
+*.img.gz
+*.qcow2
+/storage
